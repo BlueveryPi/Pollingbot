@@ -4,6 +4,7 @@ import copy
 import random
 import time
 from discord.commands.options import Option
+from discord.enums import InputTextStyle
 from discord.ext import commands
 from discord.ui import InputText, Modal
 from discord.ui.select import Select
@@ -56,9 +57,11 @@ class MyModal(Modal):
         super().__init__(title=title)
         self.value={}
         self.custom_id=_id
-        self.add_item(InputText(label="asdf", placeholder="asdff"))
+        self.add_item(InputText(label="후보자", style=InputTextStyle.short, placeholder="기호 n번 <이름>"))
+        self.add_item(InputText(label="후보자를 고른 이유", style=InputTextStyle.multiline, placeholder="후보를 비방하는 글은 자제해주세요!"))
 
     async def callback(self, interaction):
+        self.value["_id"]=interaction.user.id
         for child in self.children:
             self.value[child.label]=child.value
 
@@ -85,7 +88,7 @@ async def on_ready():
 async def 설문조사(ctx: discord.ApplicationContext, option: Option(str, "설문조사로 뭘 하실 건가요?", choices=["작성"])):#, "조회"])):
     if option == "작성":
         #await ctx.defer()
-        await ctx.send_modal(MyModal(title="asdf", _id="447632695"))
+        await ctx.send_modal(MyModal(title="대선", _id="447632695"))
     elif option == "조회":
         view=SelectPolls(ctx)
         await ctx.respond("어떤 설문조사죠? 아이디로 알려주세요!", view=view, ephemeral=True)
